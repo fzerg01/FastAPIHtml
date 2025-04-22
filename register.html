@@ -98,7 +98,7 @@
     <input id="reg-password" placeholder="密碼" type="password" />
     <button onclick="register()">註冊</button>    
     <!-- <button onclick="window.history.back()">上一頁</button> -->
-    <button onclick="window.location.href='/index.html'">上一頁</button>
+    <button onclick="window.location.href='./index.html'">上一頁</button>
     <div id="register-response" class="response"></div>
     
   </div>
@@ -125,7 +125,7 @@
       document.getElementById("register-response").innerText = JSON.stringify(data, null, 2);
       // 註冊成功
       alert('註冊成功！即將跳轉到首頁');
-        window.location.href = '/'; // 或用 replace('/') 根據需求
+        window.location.href = './'; // 或用 replace('/') 根據需求
     } catch (error) {
         console.error('註冊失敗:', error);
         alert('註冊失敗，請稍後再試');
