@@ -94,12 +94,16 @@
   <div class="container">
     <h2>註冊</h2>
     <input id="reg-username" placeholder="使用者名稱" />
+    <input id="reg-email" placeholder="信箱" type="email" />
     <input id="reg-password" placeholder="密碼" type="password" />
     <button onclick="register()">註冊</button>
+    <input id="reg-code" placeholder="驗證碼" />
+    <button onclick="verify()">帳號驗證</button>
+    <button onclick="resend()">重寄驗證碼</button>
     <div id="register-response" class="response"></div>
-
+    
     <h2>登入</h2>
-    <input id="login-username" placeholder="使用者名稱" />
+    <input id="login-email" placeholder="使用者名稱" />
     <input id="login-password" placeholder="密碼" type="password" />
     <button onclick="login()">登入</button>
     <div id="login-response" class="response"></div>
@@ -119,32 +123,34 @@
   </div>
 
   <script>
-    // const baseUrl = "http://127.0.0.1:8000";
-    const baseUrl = "https://fastapi-o8ja.onrender.com";
+     const baseUrl = "http://127.0.0.1:8000";
+    //onst baseUrl = "https://fastapi-o8ja.onrender.com";
     
     let accessToken = "";
 
     async function register() {
       const username = document.getElementById("reg-username").value;
+      const email = document.getElementById("reg-email").value;
       const password = document.getElementById("reg-password").value;
+      
 
       const res = await fetch(`${baseUrl}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username,email, password })
       });
       const data = await res.json();
       document.getElementById("register-response").innerText = JSON.stringify(data, null, 2);
     }
 
     async function login() {
-      const username = document.getElementById("login-username").value;
+      const email = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
 
       const res = await fetch(`${baseUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
       });
       const data = await res.json();
       accessToken = data.access_token || "";
@@ -198,13 +204,38 @@
         const card = document.createElement("div");
         card.className = "user-card";
         card.innerHTML = `
-          <span>🔹 ${index + 1}. ${user.username}</span>
+          <span>🔹 ${index + 1}. ${user.username} . ${user.email}</span>
           ${user.created_at ? `<small>註冊時間：${new Date(user.created_at).toLocaleString()}</small>` : ""}
         `;
         container.appendChild(card);
       });
     }
 
+    async function verify() {
+      const email = document.getElementById("reg-email").value;
+      const code = document.getElementById("reg-code").value;
+      
+
+      const res = await fetch(`${baseUrl}/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code })
+      });
+      const data = await res.json();
+      document.getElementById("register-response").innerText = JSON.stringify(data, null, 2);
+    }
+    
+    async function resend() {
+      const email = document.getElementById("reg-email").value;
+
+      const res = await fetch(`${baseUrl}/resend-verification`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      document.getElementById("register-response").innerText = JSON.stringify(data, null, 2);
+    }
   </script>
 </body>
 </html>
