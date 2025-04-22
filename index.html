@@ -66,6 +66,28 @@
         width: 100%;
       }
     }
+
+    .user-list {
+      margin-top: 15px;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    .user-card {
+      background-color: #f8f9fa;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-top: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .user-card span {
+      display: block;
+      font-weight: bold;
+      color: #333;
+    }
+
   </style>
 </head>
 <body>
@@ -89,10 +111,17 @@
     <h2>我的資料</h2>
     <button onclick="getMe()">查看我的資訊</button>
     <div id="me-detail" class="response"></div>
+
+    <h2>最新註冊用戶</h2>
+    <button onclick="getLatestUsers()">查看前五名</button>
+    <div id="latest-users" class="user-list"></div>
+
   </div>
 
   <script>
-    const baseUrl = "http://127.0.0.1:8000";
+    // const baseUrl = "http://127.0.0.1:8000";
+    const baseUrl = "https://fastapi-o8ja.onrender.com";
+    
     let accessToken = "";
 
     async function register() {
@@ -137,6 +166,45 @@
       const data = await res.json();
       document.getElementById("me-detail").innerText = JSON.stringify(data, null, 2);
     }
+
+    async function getLatestUsers() {
+      if (!accessToken) {
+        alert("請先登入才能查看最新用戶！");
+        return;
+      }
+    
+      const res = await fetch(`${baseUrl}/users/latest`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+    
+      const container = document.getElementById("latest-users");
+      container.innerHTML = ""; // 清空
+    
+      const data = await res.json();
+    
+      if (res.status !== 200) {
+        container.innerHTML = `<div class="response">錯誤：${data.detail}</div>`;
+        return;
+      }
+    
+      if (data.length === 0) {
+        container.innerHTML = "<div class='response'>目前沒有新註冊的用戶</div>";
+        return;
+      }
+    
+      data.forEach((user, index) => {
+        const card = document.createElement("div");
+        card.className = "user-card";
+        card.innerHTML = `
+          <span>🔹 ${index + 1}. ${user.username}</span>
+          ${user.created_at ? `<small>註冊時間：${new Date(user.created_at).toLocaleString()}</small>` : ""}
+        `;
+        container.appendChild(card);
+      });
+    }
+
   </script>
 </body>
 </html>
