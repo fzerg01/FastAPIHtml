@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用戶系統</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      width: 100%;
+      height: 1200px;
+      max-width: 1200px;
+      background: white;
+      padding: 30px 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    input, button {
+      width: 80%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button {
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .response {
+      margin-top: 10px;
+      background: #e9ecef;
+      padding: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px 15px;
+      }
+      input, button, .response {
+        width: 100%;
+      }
+    }
+
+    .user-list {
+      margin-top: 15px;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    .user-card {
+      background-color: #f8f9fa;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-top: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .user-card span {
+      display: block;
+      font-weight: bold;
+      color: #333;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>註冊</h2>
+    <input id="reg-username" placeholder="使用者名稱" />
+    <input id="reg-email" placeholder="信箱" type="email" />
+    <input id="reg-password" placeholder="密碼" type="password" />
+    <button onclick="register()">註冊</button>    
+    <!-- <button onclick="window.history.back()">上一頁</button> -->
+    <button onclick="window.location.href='/index.html'">上一頁</button>
+    <div id="register-response" class="response"></div>
+    
+  </div>
+
+  <script>
+     //const baseUrl = "http://127.0.0.1:8000";
+    const baseUrl = "https://fastapi-o8ja.onrender.com";
+    
+    let accessToken = "";
+
+    async function register() {
+      try {
+      const username = document.getElementById("reg-username").value;
+      const email = document.getElementById("reg-email").value;
+      const password = document.getElementById("reg-password").value;
+      
+
+      const res = await fetch(`${baseUrl}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username,email, password })
+      });
+      const data = await res.json();
+      document.getElementById("register-response").innerText = JSON.stringify(data, null, 2);
+      // 註冊成功
+      alert('註冊成功！即將跳轉到首頁');
+        window.location.href = '/'; // 或用 replace('/') 根據需求
+    } catch (error) {
+        console.error('註冊失敗:', error);
+        alert('註冊失敗，請稍後再試');
+    }
+    }
+
+  </script>
+</body>
+</html>
